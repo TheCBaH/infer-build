@@ -1,0 +1,12 @@
+FROM infer:opam
+RUN set -eux; \
+    cd ~; \
+    git clone --recurse-submodules https://github.com/facebook/infer/; \
+    echo DONE
+
+RUN set -eux; \
+    cd ~/infer;\
+    eval $(opam env); \
+    ./autogen.sh;\
+    ./configure;\
+    ./facebook-clang-plugins/clang/setup.sh

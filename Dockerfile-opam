@@ -1,0 +1,23 @@
+FROM infer:linux
+# Install opam 2
+RUN set -eux; \
+    curl -sL https://github.com/ocaml/opam/releases/download/2.0.2/opam-2.0.2-x86_64-linux > /usr/bin/opam;\
+    chmod +x /usr/bin/opam; \
+# Disable sandboxing
+# Without this opam fails to compile OCaml for some reason. We don't need sandboxing inside a Docker container anyway.
+    opam init --reinit --bare --disable-sandboxing;\
+    useradd -G sudo -ms /bin/bash infer;\
+    echo '%sudo ALL=(ALL) NOPASSWD: ALL' >>/etc/sudoers; \
+    rm -rf /tmp/*
+USER infer
+RUN set -eux; \
+    opam init --reinit --bare --disable-sandboxing;\
+    cd /tmp; \
+    curl -sL https://raw.githubusercontent.com/facebook/infer/master/build-infer.sh  >build-infer.sh; \
+    mkdir scripts; \
+    curl -sL https://raw.githubusercontent.com/facebook/infer/master/scripts/opam_utils.sh > /tmp/scripts/opam_utils.sh; \
+    curl -sL https://raw.githubusercontent.com/facebook/infer/master/opam > /tmp/opam; \
+    curl -sL https://raw.githubusercontent.com/facebook/infer/master/opam.locked > /tmp/opam.locked; \
+    chmod +x build-infer.sh scripts/opam_utils.sh; \
+    ./build-infer.sh --only-setup-opam; \
+    rm -rf /tmp/*
