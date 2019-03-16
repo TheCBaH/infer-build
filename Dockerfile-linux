@@ -1,6 +1,7 @@
 FROM debian:stretch-slim
 # mkdir the man/man1 directory due to Debian bug #863199
 RUN set -exu;\
+    export http_proxy=$HTTP_PROXY; \
     apt-get update; \
     mkdir -p /usr/share/man/man1; \
     apt-get install --yes --no-install-recommends \

@@ -1,7 +1,7 @@
 FROM infer:opam
 RUN set -eux; \
     cd ~; \
-    git clone --recurse-submodules https://github.com/facebook/infer/; \
+    git clone --depth 1 --recurse-submodules https://github.com/facebook/infer/; \
     echo DONE
 
 RUN set -eux; \
@@ -9,4 +9,5 @@ RUN set -eux; \
     eval $(opam env); \
     ./autogen.sh;\
     ./configure;\
-    ./facebook-clang-plugins/clang/setup.sh
+    ./facebook-clang-plugins/clang/setup.sh; \
+    rm -rf /tmp/*
